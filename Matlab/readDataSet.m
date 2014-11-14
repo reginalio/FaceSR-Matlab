@@ -1,4 +1,5 @@
 function data = readDataSet(N)
+% Read full image data set
 % INPUT: N - end index of the data set
     [x, y] = size(imread('Face000.pgm'));
     data = zeros(x,y, 2*(N+1),'uint8');

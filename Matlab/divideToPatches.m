@@ -1,5 +1,9 @@
+% divide dataHR/LR to patches -> yHR/LR
+
+% End patch index for each face image
 U = ceil((HR_SIZE(1)-HR_OVERLAP)/(HR_PATCH_SIZE-HR_OVERLAP));
 V = ceil((HR_SIZE(2)-HR_OVERLAP)/(HR_PATCH_SIZE-HR_OVERLAP));
+
 N = size(dataHR,3);
 stepHR = floor(HR_SIZE(1)/U);
 stepLR = floor(LR_SIZE(1)/U);

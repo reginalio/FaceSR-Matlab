@@ -1,7 +1,9 @@
 function xHR = reconstruction(xLR,yLR, yHR, TAU)
-% INPUT: testing data: xLR has dimension 2x2x7x7x40, 
-%        training data yLR has dimension 2x2x7x7x360
-% OUTPUT:
+% Reconstruct super-resolution image of target face xLR
+% INPUT: testing data: xLR has dimension 3x3x7x7x40, 
+%        training data: yLR has dimension 3x3x7x7x360, 
+%                       yHR has dimension 12x12x7x7x360
+% OUTPUT: xHR is estimation of the HR target face
 
     xHR = zeros(size(yHR,1), size(yHR,2), size(yHR,3), size(yHR,4), size(xLR,5));
     
