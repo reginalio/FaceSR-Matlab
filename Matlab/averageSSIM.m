@@ -1,5 +1,5 @@
 function avgSSIM = averageSSIM(testHR, ref)
-% Measure structural similarity of between all images in testHR and ref
+% Measure structural similarity between all images in testHR and ref
 % avgSSIM in [-1, 1]
 
     sumSSIM = 0;

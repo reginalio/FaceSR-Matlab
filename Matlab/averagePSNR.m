@@ -1,5 +1,5 @@
 function [avgPSNR, avgSNR] = averagePSNR(testHR, ref)
-% Measure Peak Signal-to-Noise Ratio of between all images in testHR and ref
+% Measure Peak Signal-to-Noise Ratio of all images in testHR with ref
 
 
     sumPSNR = 0;

@@ -12,3 +12,4 @@ HR_OVERLAP = LR_OVERLAP*HRLR_RATIO;
 
 TAU = 0.04; % regularization parameter
 
+save('constants.mat');
