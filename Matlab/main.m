@@ -1,26 +1,27 @@
 function main
 
-    load('constants.mat', 'LR_SIZE', 'HR_SIZE', 'TAU');
-    %%% import database
-    % dataRandom = readDataSet(922);
-    load('groundTruth.mat', 'dataRandom');
+    load('constants.mat', 'TAU', 'HR_OVERLAP');
     
-    trainSize = 360;
-    testSize = 40;
-    dataRandom = dataRandom(:,:,1:(trainSize+testSize));
+    %%% import database or load data from pre-saved files
+    dataRandom = readDataSet(922);    
+    [trainset, testset] = getTrainAndTestData(dataRandom);
     
-    %%% downsample to LR and HR
-    dataLR = imresize(dataRandom, LR_SIZE);
-    dataHR = imresize(dataRandom, HR_SIZE);
+    %%% reconstruct testLR 
+    % (1) Face hallucination via LcR
+    % (2) Bicubic Interpolation
+    % (3) PCA-based method
+    resultLcR = reconstruction(testset.LR_p,trainset.LR_p, trainset.HR_p, TAU, HR_OVERLAP);
+    resultBI = bicubicInterpolation(testset.LR);
+    
+    [widthBI, ~, N] = size(resultBI);
+    testset.HR_ref_BI = imresize(dataRandom(:,:,1:N), [widthBI, widthBI]);
+    
+    %%% measure output quality
+    SSIMLcR = averageSSIM(resultLcR, testset.HR_ref)
+    SSIMBI = averageSSIM(resultBI, testset.HR_ref_BI)
+    
+    pSNRLcR = averagePSNR(resultLcR, testset.HR_ref)
+    pSNRBI = averagePSNR(resultBI, testset.HR_ref_BI)
+        
 
-    %%% choose training set and testing set
-    trainLR = dataLR(:, :, 1:trainSize);
-    trainHR = dataHR(:, :, 1:trainSize);
-    testLR = dataLR(:,:,trainSize+1:end);
-    testHR = dataHR(:,:,trainSize+1:end);
-    
-    
-    
-    
-    
 end
