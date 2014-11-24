@@ -16,10 +16,13 @@ function [trainset, testset] = getTrainAndTestData(dataRandom)
         %%% choose training set and testing set
         testset.LR = dataLR(:, :, trainSize+1:end);
         testset.HR_ref = dataHR(:, :, trainSize+1:end);
-
+        testset.groundTruth = dataRandom(:, :, trainSize+1:end);
+        
         trainset.LR_p = patchedLR(:, :, :, :, 1:trainSize);
         trainset.HR_p = patchedHR(:, :, :, :, 1:trainSize);
         testset.LR_p = patchedLR(:, :, :, :, trainSize+1:end);
+        
+        
 
         save('trainAndTestData.mat', 'testset', 'trainset'); 
     else

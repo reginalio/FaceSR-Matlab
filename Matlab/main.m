@@ -22,6 +22,6 @@ function main
     
     pSNRLcR = averagePSNR(resultLcR, testset.HR_ref)
     pSNRBI = averagePSNR(resultBI, testset.HR_ref_BI)
-        
-
+    
+    save('result.mat');
 end
