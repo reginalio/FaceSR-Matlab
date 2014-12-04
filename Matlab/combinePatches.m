@@ -1,5 +1,6 @@
 function x = combinePatches(xHR, HR_OVERLAP)
-
+        
+        disp('Combining patches for reconstructed HR face image...');
         % reconstruct xHR full image from patches
         x = permute(xHR, [1 4 2 3]);
         width = size(xHR,1)*size(xHR,3);

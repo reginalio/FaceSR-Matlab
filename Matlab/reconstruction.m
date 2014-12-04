@@ -5,6 +5,7 @@ function targetHR = reconstruction(xLR,yLR, yHR, TAU, HR_OVERLAP)
 %                       yHR has dimension 12x12x7x7x360
 % OUTPUT: targetHR is estimation of the HR target face 60x60x40
 
+    disp('Reconstructing input LR faces...');
     % preallocation for speed - TODO make 60 a constant
     xHR = zeros(size(yHR,1), size(yHR,2), size(yHR,3), size(yHR,4), size(xLR,5));
     targetHR = zeros(60, 60, size(xLR,5));

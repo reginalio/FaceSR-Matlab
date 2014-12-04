@@ -1,9 +1,12 @@
-function [dataRandom, data] = readDataSet(N)
+function [data] = readDataSet(N)
 % Read full image data set
 % INPUT: N - end index of the data set
 
-    if(exist('groundTruth.mat', 'file') == 0)
+% 1-1674 as training set
+% 1675 - 1846 as testing set
+
         if(exist('fullSizeData.mat','file') == 0)
+            disp('reading full size face database...');
             [x, y] = size(imread('../Full Size Database/Face000.pgm'));
             data = zeros(x,y, 2*(N+1),'uint8');
 
@@ -16,14 +19,5 @@ function [dataRandom, data] = readDataSet(N)
         else
             load('fullSizeData.mat');
         end
-        
-            %randomise rows
-            dataRandom = data(:, :, randperm(size(data,3)));
-            save('groundTruth.mat', 'dataRandom');            
-        
-    else
-        load('groundTruth.mat');
-
-    end
 
 end
