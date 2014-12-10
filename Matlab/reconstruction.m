@@ -37,26 +37,8 @@ function targetHR = reconstruction(xLR,yLR, yHR, TAU, HR_OVERLAP)
         end
         
         % reconstruct xHR full image from patches
-        xk = permute(xHR(:,:,:,:,k), [1 4 2 3]);
-        width = size(xHR,1)*size(xHR,3);
-        xk = reshape(xk, width, width);
-        
-        % average overlapping pixels
-        startIndex = size(xHR,1) - HR_OVERLAP/2;
-        endIndex = startIndex + HR_OVERLAP;
-        v = [];
-        for i = 1:size(xHR, 3)-1
-            xk(startIndex, :) = mean(xk(startIndex:endIndex, :));
-            xk(:, startIndex) = mean(xk(:, startIndex:endIndex),2);
-            v = cat(1,v, startIndex+1:endIndex);
-            startIndex = startIndex + size(xHR,1);
-            endIndex = endIndex + size(xHR,1);
-        end
-        
-        % remove extra rows and columns
-        xk(v,:) = [];    
-        xk(:,v) = [];
-        
-        targetHR(:,:,k) = xk;
+        disp(strcat('Combining patches for reconstructed HR face image...', num2str(k)));
+        targetHR(:,:,k) = combinePatches(xHR(:,:,:,:,k), HR_OVERLAP);
+
     end
 end

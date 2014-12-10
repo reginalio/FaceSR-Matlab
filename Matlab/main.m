@@ -10,7 +10,8 @@ function main
     % (1) Face hallucination via LcR
     % (2) Bicubic Interpolation
     % (3) PCA-based method
-    resultLcR = reconstruction(testSet.LR_p,trainSet.LR_p, trainSet.HR_p, TAU, HR_OVERLAP);
+    resultLcR = reconstruction(testSet.LR_p,trainSet.LR_p, trainSet.HR_p,...
+                   TAU, HR_OVERLAP);
     resultBI = bicubicInterpolation(testSet.LR);
     
     [widthBI, ~, N] = size(resultBI);
