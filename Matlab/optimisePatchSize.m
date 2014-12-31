@@ -57,8 +57,10 @@ function optimisePatchSize
         
     end
     
+    fname = strcat('
+    save(
     figure;
-    plot(patchWidth, SSIMLcR);
+    plot(patchWidth, SSIMLcR, patchWidth, SSIMBI);
 end
 
 function [patchedLR, patchedHR] = divideToPatches2(LR, HR, params)
