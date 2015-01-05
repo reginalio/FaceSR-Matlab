@@ -3,7 +3,7 @@ function optimisePatchSize
 
 
     load('parameters.mat');
-    patchWidth = [2, 3, 4, 5];
+    patchWidth = [2,3,4,5,6,7,8,9,10];
     
     SSIMLcR = zeros(1, length(patchWidth));
     SSIMBI = zeros(1, length(patchWidth));
@@ -12,15 +12,20 @@ function optimisePatchSize
     pSNRBI = zeros(1, length(patchWidth));
     
     % get training and testing data
-    data = readDataSet(922);    
-    trainSize = 360;
-    trainRange = [1, 1674];
-    testSize = 40;
-    testRange = [1675, 1846];
+    if(exist('trainAndTestSetRandom.mat', 'file') == 0)
+        data = readDataSet(922);    
+        trainSize = 360;
+        trainRange = [1, 1674];
+        testSize = 40;
+        testRange = [1675, 1846];
 
-    trainSet.groundTruth = data(:, :, randperm(trainRange(2), trainSize));
-    testSet.groundTruth = data(:,:,randperm(diff(testRange)+1, testSize)+trainRange(2));
-    
+        trainSet.groundTruth = data(:, :, randperm(trainRange(2), trainSize));
+        testSet.groundTruth = data(:,:,randperm(diff(testRange)+1, testSize)+trainRange(2));
+
+        save('trainAndTestSetRandom.mat', 'trainSet', 'testSet');
+    else
+        load('trainAndTestSetRandom.mat');
+    end
     % determine result quality for each patchWidth
     for i = 1:length(patchWidth)
         disp(strcat('patch width:', num2str(patchWidth(i))));
@@ -45,22 +50,22 @@ function optimisePatchSize
         resultBI = bicubicInterpolation(testSet.LR);
 
         [widthBI, ~, N] = size(resultBI);
-        testSet.HR_BI = imresize(data(:,:,1:N), [widthBI, widthBI]);
+        testSet.HR_BI = imresize(testSet.HR, [widthBI, widthBI]);
 
         %%% measure output quality
-        SSIMLcR(i) = averageSSIM(resultLcR, testSet.HR);
-        SSIMBI(i) = averageSSIM(resultBI, testSet.HR_BI);
+        SSIMLcR(i) = averageSSIM(resultLcR, testSet.HR)
+        SSIMBI(i) = averageSSIM(resultBI, testSet.HR_BI)
 
-        pSNRLcR(i) = averagePSNR(resultLcR, testSet.HR);
-        pSNRBI(i) = averagePSNR(resultBI, testSet.HR_BI);
+        pSNRLcR(i) = averagePSNR(resultLcR, testSet.HR)
+        pSNRBI(i) = averagePSNR(resultBI, testSet.HR_BI)
         
         
     end
     
-    fname = strcat('
-    save(
-    figure;
-    plot(patchWidth, SSIMLcR, patchWidth, SSIMBI);
+    fname = 'optPatchResult.mat';
+%     save(fname, 'SSIMLcR', 'SSIMBI', 'pSNRLcR', 'pSNRBI', 'patchWidth');
+%     figure;
+%     plot(patchWidth, SSIMLcR, patchWidth, SSIMBI);
 end
 
 function [patchedLR, patchedHR] = divideToPatches2(LR, HR, params)
