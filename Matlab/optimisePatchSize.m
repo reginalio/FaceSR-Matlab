@@ -11,6 +11,10 @@ function optimisePatchSize
     pSNRLcR = zeros(1, length(patchWidth));
     pSNRBI = zeros(1, length(patchWidth));
     
+    prepTime = zeros(1, length(patchWidth));
+    runTime = zeros(1, length(patchWidth));
+    runTimeBI = zeros(1, length(patchWidth));
+    
     % get training and testing data
     if(exist('trainAndTestSetRandom.mat', 'file') == 0)
         data = readDataSet(922);    
@@ -41,13 +45,23 @@ function optimisePatchSize
         testSet.HR = imresize(testSet.groundTruth, parameters.HRSize);
         
         %%% obtain patched version
+        start = tic;
         [trainSet.LR_p, trainSet.HR_p] = divideToPatches2(trainSet.LR, trainSet.HR, parameters);
         [testSet.LR_p, testSet.HR_p] = divideToPatches2(testSet.LR, testSet.HR, parameters);
+        now = toc(start);
+        prepTime(i) = now;
         
         %%% reconstruction via LcR
+        start = tic;
         resultLcR = reconstruction(testSet.LR_p,trainSet.LR_p, trainSet.HR_p,...
                    parameters.tau, parameters.HROverlap);
+        now = toc(start);
+        runTime(i) = now;
+        
+        start = tic;
         resultBI = bicubicInterpolation(testSet.LR);
+        now = toc(start);
+        runTimeBI(i) = now;
 
         [widthBI, ~, N] = size(resultBI);
         testSet.HR_BI = imresize(testSet.HR, [widthBI, widthBI]);
@@ -62,10 +76,29 @@ function optimisePatchSize
         
     end
     
-    fname = 'optPatchResult.mat';
-%     save(fname, 'SSIMLcR', 'SSIMBI', 'pSNRLcR', 'pSNRBI', 'patchWidth');
-%     figure;
-%     plot(patchWidth, SSIMLcR, patchWidth, SSIMBI);
+    fname = 'optPatchResultO1.mat';
+    save(fname, 'SSIMLcR', 'SSIMBI', 'pSNRLcR', 'pSNRBI', 'patchWidth', 'prepTime', 'runTime', 'runTimeBI');
+
+    %%%%% plots %%%%%
+     figure;
+     hold on;
+     plot(patchWidth, SSIMLcR, 'DisplayName', 'LcR');
+     plot(patchWidth, SSIMBI, 'DisplayName', 'BI');
+     legend('-DynamicLegend');
+     xlabel('Patch width');
+     ylabel('Quality of output (SSIM)');
+     title('Relationship between Patch Width and Quality of output (SSIM)');
+     
+     totalLcRTime = prepTime + runTime;
+     figure;
+     hold on;
+     plot(patchWidth, totalLcRTime, 'DisplayName', 'Total Time');
+     plot(patchWidth, prepTime, 'DisplayName', 'Prep Time');
+     plot(patchWidth, runTime, 'DisplayName', 'Run Time');
+     legend('-DynamicLegend');
+     title('How patch width affects runtime for LcR');
+     xlabel('Patch width');
+     ylabel('Time taken');
 end
 
 function [patchedLR, patchedHR] = divideToPatches2(LR, HR, params)
