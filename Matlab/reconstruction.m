@@ -19,8 +19,8 @@ function targetHR = reconstruction(xLR,yLR, yHR, TAU, HR_OVERLAP)
         for i=1:size(xLR,3)
             for j=1:size(xLR,4)
                 % solution to objective function for finding optimal w
-                C = repmat(double(xLR(:,:,i,j,k)),1,1,size(yLR,5))...
-                        -double(squeeze(yLR(:,:,i,j,:)));
+                C = repmat(xLR(:,:,i,j,k),1,1,size(yLR,5))...
+                        -squeeze(yLR(:,:,i,j,:));
                 C = reshape(C,[],size(C,3));
                 G = C'*C;   % covariance matrix for X(i,j)
                 Dmm = diag(squeeze(d(i,j,:)));  % diagonal matrix containing patch (i,j) for all Ym
@@ -32,7 +32,7 @@ function targetHR = reconstruction(xLR,yLR, yHR, TAU, HR_OVERLAP)
                 w1 = repmat(w1, size(yHR,1), size(yHR,2), 1);
                 
                 % construct HR patch
-                xHR(:,:,i,j,k) = sum(squeeze(double(yHR(:,:,i,j,:))).*w1, 3);                
+                xHR(:,:,i,j,k) = sum(squeeze(yHR(:,:,i,j,:)).*w1, 3);                
             end
         end
         

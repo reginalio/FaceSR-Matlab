@@ -1,6 +1,6 @@
 function showReconstruction
 
-    load('result.mat');
+    load('resultSort.mat');
 
     limit = size(testSet.LR,3);
     step = 5;
@@ -9,16 +9,16 @@ function showReconstruction
     for i = 1:step:limit
         figure(i);
         subplot(1,4,1);
-        imshow(uint8(testSet.LR(:,:,i)));
+        imshow(testSet.LR(:,:,i));
         title('Low resolution input');
         subplot(1,4,2);
-        imshow(uint8(result(:,:,i)));
+        imshow(result(:,:,i));
         title('Reconstructed face');
         subplot(1,4,3);
-        imshow(uint8(testSet.HR(:,:,i)));
+        imshow(testSet.HR(:,:,i));
         title('Ground truth at HR');
         subplot(1,4,4);
-        imshow(uint8(testSet.groundTruth(:,:,i)));
+        imshow(testSet.groundTruth(:,:,i));
         title('Ground truth');
     end
 

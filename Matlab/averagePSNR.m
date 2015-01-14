@@ -6,7 +6,7 @@ function [avgPSNR, avgSNR] = averagePSNR(testHR, ref)
     sumSNR = 0;
     
     for i = 1:size(testHR,3)
-        [peaksnr, snr] = psnr(uint8(testHR(:,:,i)), ref(:,:,i));
+        [peaksnr, snr] = psnr(testHR(:,:,i), ref(:,:,i));
         sumPSNR = sumPSNR + peaksnr;
         sumSNR = sumSNR + snr;      
     end
