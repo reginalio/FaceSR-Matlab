@@ -1,12 +1,12 @@
 function optimiseOverlap
-% find result quality for each patchWidth to determine optimial overlap
+% find result quality for each overlap width to determine optimial overlap
 
 
     load('parameters.mat');
     
-    overlap = [1,2, 3];
-    parameters.LRPatch = 4;
-    parameters.HRPatch = 4*parameters.ratio;
+    overlap = [0,1,2];
+%     parameters.LRPatch = 4;
+%     parameters.HRPatch = 4*parameters.ratio;
     
     SSIMLcR = zeros(1, length(overlap));
     SSIMBI = zeros(1, length(overlap));
@@ -34,7 +34,14 @@ function optimiseOverlap
         load('trainAndTestSetRandom.mat');
     end
     
-    % determine result quality for each patchWidth
+    % downsample to LR and HR
+    trainSet.LR = imresize(trainSet.groundTruth, parameters.LRSize);
+    trainSet.HR = imresize(trainSet.groundTruth, parameters.HRSize);
+
+    testSet.LR = imresize(testSet.groundTruth, parameters.LRSize);
+    testSet.HR = imresize(testSet.groundTruth, parameters.HRSize);
+    
+    % determine result quality for each overlap width
     for i = 1:length(overlap)
         disp(strcat('overlap:', num2str(overlap(i))));
         if(overlap(i)>= parameters.LRPatch)
@@ -44,14 +51,7 @@ function optimiseOverlap
         parameters.LROverlap = overlap(i);
         parameters.HROverlap = overlap(i)*parameters.ratio;
         
-        disp('getting train and test data...');
-        %%% downsample to LR and HR
-        trainSet.LR = imresize(trainSet.groundTruth, parameters.LRSize);
-        trainSet.HR = imresize(trainSet.groundTruth, parameters.HRSize);
-        
-        testSet.LR = imresize(testSet.groundTruth, parameters.LRSize);
-        testSet.HR = imresize(testSet.groundTruth, parameters.HRSize);
-        
+        disp('getting patched train and test data...');
         %%% obtain patched version
         start = tic;
         [trainSet.LR_p, trainSet.HR_p] = divideToPatches2(trainSet.LR, trainSet.HR, parameters);
@@ -84,7 +84,7 @@ function optimiseOverlap
         
     end
     
-    fname = 'optOverlapResultP4.mat';
+    fname = 'optOverlapResultP3.mat';
     save(fname, 'SSIMLcR', 'SSIMBI', 'pSNRLcR', 'pSNRBI', 'overlap', 'prepTime', 'runTime', 'runTimeBI');
     
     %%%%% plots %%%%%
@@ -107,8 +107,6 @@ function optimiseOverlap
      title('How overlap width affects runtime for LcR');
      xlabel('Overlap width');
      ylabel('Time taken');
-
-     
      
 end
 
