@@ -13,3 +13,16 @@ HR_OVERLAP = LR_OVERLAP*HRLR_RATIO;
 TAU = 0.04; % regularization parameter
 
 save('constants.mat');
+
+
+parameters.ratio = 4;
+parameters.LRSize = [15, 15];
+parameters.LRPatch = parameters.LRSize(1)/5;
+parameters.LROverlap = 1;
+
+parameters.HRSize = parameters.LRSize*parameters.ratio;
+parameters.HRPatch = parameters.LRPatch*parameters.ratio;
+parameters.HROverlap = parameters.LROverlap*parameters.ratio;
+parameters.tau = 0.04; % regularization parameter
+
+save('parameters.mat', 'parameters');
