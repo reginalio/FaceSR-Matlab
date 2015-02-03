@@ -19,5 +19,7 @@ function [data] = readDataSet(N)
         else
             load('fullSizeData.mat');
         end
+        
+        data = double(data)/255;
 
 end
