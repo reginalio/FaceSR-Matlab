@@ -23,8 +23,8 @@ function [trainSet, testSet] = getTrainAndTestData(data)
         testSet.HR = imresize(testSet.groundTruth, parameters.HRSize);
         
         %%% obtain patched version
-        [trainSet.LR_p, trainSet.HR_p] = divideToPatches2(trainSet.LR, trainSet.HR, parameters);
-        [testSet.LR_p, testSet.HR_p] = divideToPatches2(testSet.LR, testSet.HR, parameters);
+        [trainSet.LR_p, trainSet.HR_p] = divideToPatches3(trainSet.LR, trainSet.HR, parameters);
+        [testSet.LR_p, testSet.HR_p] = divideToPatches3(testSet.LR, testSet.HR, parameters);
         
         save('trainAndTestDataFP.mat', 'testSet', 'trainSet'); 
     else

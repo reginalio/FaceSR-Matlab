@@ -1,4 +1,4 @@
-function targetHR = reconstructionWithSort(xLR,yLR, yHR, TAU, HR_OVERLAP, N)
+function targetHR = reconstructionWithSort(xLR,yLR, yHR, TAU, HR_OVERLAP, HRwidth, N)
 % Reconstruct super-resolution image of target face xLR
 % sorts distance between xLR and yLR and only select N training images 
 % for reconstruction
@@ -8,9 +8,8 @@ function targetHR = reconstructionWithSort(xLR,yLR, yHR, TAU, HR_OVERLAP, N)
 % OUTPUT: targetHR is estimation of the HR target face 60x60x40
 
     disp('Reconstructing input LR faces...');
-    % preallocation for speed - TODO make 60 a constant
     xHR = zeros(size(yHR,1), size(yHR,2), size(yHR,3), size(yHR,4), size(xLR,5));
-    targetHR = zeros(60, 60, size(xLR,5));
+    targetHR = zeros(HRwidth, HRwidth, size(xLR,5));
     
     if nargin<6
         disp('N not specified, N default to all training images');
@@ -62,7 +61,7 @@ function targetHR = reconstructionWithSort(xLR,yLR, yHR, TAU, HR_OVERLAP, N)
         
         % reconstruct xHR full image from patches
         disp(strcat('Combining patches for reconstructed HR face image...', num2str(k)));
-        targetHR(:,:,k) = combinePatches(xHR(:,:,:,:,k), HR_OVERLAP);
+        targetHR(:,:,k) = combinePatches(xHR(:,:,:,:,k), HR_OVERLAP, HRwidth);
 
     end
 end

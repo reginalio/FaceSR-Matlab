@@ -1,4 +1,4 @@
-function targetHR = reconstruction(xLR,yLR, yHR, TAU, HR_OVERLAP)
+function targetHR = reconstruction(xLR,yLR, yHR, TAU, HR_OVERLAP, HRwidth)
 % Reconstruct super-resolution image of target face xLR
 % INPUT: testing data: xLR has dimension 3x3x7x7x40, 
 %        training data: yLR has dimension 3x3x7x7x360, 
@@ -6,9 +6,9 @@ function targetHR = reconstruction(xLR,yLR, yHR, TAU, HR_OVERLAP)
 % OUTPUT: targetHR is estimation of the HR target face 60x60x40
 
     disp('Reconstructing input LR faces...');
-    % preallocation for speed - TODO make 60 a constant
+    % preallocation for speed
     xHR = zeros(size(yHR,1), size(yHR,2), size(yHR,3), size(yHR,4), size(xLR,5));
-    targetHR = zeros(60, 60, size(xLR,5));
+    targetHR = zeros(HRwidth, HRwidth, size(xLR,5));
     
     % for each patch of xLR
     for k=1:size(xLR, 5)
@@ -38,7 +38,7 @@ function targetHR = reconstruction(xLR,yLR, yHR, TAU, HR_OVERLAP)
         
         % reconstruct xHR full image from patches
         disp(strcat('Combining patches for reconstructed HR face image...', num2str(k)));
-        targetHR(:,:,k) = combinePatches(xHR(:,:,:,:,k), HR_OVERLAP);
+        targetHR(:,:,k) = combinePatches(xHR(:,:,:,:,k), HR_OVERLAP, HRwidth);
 
     end
 end
