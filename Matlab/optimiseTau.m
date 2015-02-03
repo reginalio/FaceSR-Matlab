@@ -6,7 +6,7 @@ function optimiseTau
     
     maxTau = 1e1;
     tau = 1e-5;
-    maxTime = 10000;
+    maxTime = 1000;
     
     SSIMLcR = [];
     pSNRLcR = [];
@@ -14,36 +14,17 @@ function optimiseTau
     runTime = [];
     xtau = [];
     
-    % get training and testing data
-    if(exist('trainAndTestSetRandom.mat', 'file') == 0)
-        data = readDataSet(922);    
-        trainSize = 360;
-        trainRange = [1, 1674];
-        testSize = 40;
-        testRange = [1675, 1846];
-
-        trainSet.groundTruth = data(:, :, randperm(trainRange(2), trainSize));
-        testSet.groundTruth = data(:,:,randperm(diff(testRange)+1, testSize)+trainRange(2));
-
-        save('trainAndTestSetRandom.mat', 'trainSet', 'testSet');
-    else
-        load('trainAndTestSetRandom.mat');
-    end
-    
-        disp('getting train and test data...');
-        %%% downsample to LR and HR
-        trainSet.LR = imresize(trainSet.groundTruth, parameters.LRSize);
-        trainSet.HR = imresize(trainSet.groundTruth, parameters.HRSize);
+    %%% import database or load data from pre-saved files
+    data = readDataSet(922);   
+    [trainSet, testSet] = getTrainAndTestData(data);
         
-        testSet.LR = imresize(testSet.groundTruth, parameters.LRSize);
-        testSet.HR = imresize(testSet.groundTruth, parameters.HRSize);
+    %%% obtain patched version
+    start = tic;
+    [trainSet.LR_p, trainSet.HR_p] = divideToPatches3(trainSet.LR, trainSet.HR, parameters);
+    [testSet.LR_p, testSet.HR_p] = divideToPatches3(testSet.LR, testSet.HR, parameters);
+    now = toc(start);
+    prepTime = now;
         
-        %%% obtain patched version
-        start = tic;
-        [trainSet.LR_p, trainSet.HR_p] = divideToPatches2(trainSet.LR, trainSet.HR, parameters);
-        [testSet.LR_p, testSet.HR_p] = divideToPatches2(testSet.LR, testSet.HR, parameters);
-        now = toc(start);
-
     % determine result quality for each patchWidth
     while tau <= maxTau
         tau = tau*2;
@@ -53,7 +34,7 @@ function optimiseTau
         %%% reconstruction via LcR
         start = tic;
         resultLcR = reconstruction(testSet.LR_p,trainSet.LR_p, trainSet.HR_p,...
-                   parameters.tau, parameters.HROverlap);
+                   parameters.tau, parameters.HROverlap, parameters.HRSize(1));
         now = toc(start);
         runTime = [runTime; now];
 
@@ -67,8 +48,7 @@ function optimiseTau
     end
     
     
-    fname = 'optTau.mat';
-    save(fname, 'SSIMLcR', 'pSNRLcR', 'xtau', 'prepTime', 'runTime');
+
 
     %%%%% plots %%%%%
      figure;
@@ -88,7 +68,10 @@ function optimiseTau
      plot(xtau, runTime, 'DisplayName', 'Run Time');
      legend('-DynamicLegend');
      title('How tau affects runtime for LcR');
-     xlabel('tau width');
+     xlabel('tau');
      ylabel('Time taken');
+     
+     fname = 'optTau.mat';
+     save(fname, 'SSIMLcR', 'pSNRLcR', 'xtau', 'prepTime', 'runTime');
 end
 

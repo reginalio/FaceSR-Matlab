@@ -46,15 +46,15 @@ function optimisePatchSize
         
         %%% obtain patched version
         start = tic;
-        [trainSet.LR_p, trainSet.HR_p] = divideToPatches2(trainSet.LR, trainSet.HR, parameters);
-        [testSet.LR_p, testSet.HR_p] = divideToPatches2(testSet.LR, testSet.HR, parameters);
+        [trainSet.LR_p, trainSet.HR_p] = divideToPatches3(trainSet.LR, trainSet.HR, parameters);
+        [testSet.LR_p, testSet.HR_p] = divideToPatches3(testSet.LR, testSet.HR, parameters);
         now = toc(start);
         prepTime(i) = now;
         
         %%% reconstruction via LcR
         start = tic;
         resultLcR = reconstruction(testSet.LR_p,trainSet.LR_p, trainSet.HR_p,...
-                   parameters.tau, parameters.HROverlap);
+                   parameters.tau, parameters.HROverlap, parameters.HRSize(1));
         now = toc(start);
         runTime(i) = now;
         

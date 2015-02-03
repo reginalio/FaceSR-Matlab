@@ -26,7 +26,7 @@ function optimiseSortN
         %%% reconstruction via LcR
         start = tic;
         resultLcR = reconstructionWithSort(testSet.LR_p,trainSet.LR_p, trainSet.HR_p,...
-                   parameters.tau, parameters.HROverlap, N);
+                   parameters.tau, parameters.HROverlap, parameters.HRSize(1), N);
         now = toc(start);
         runTime = [runTime; now];
 
