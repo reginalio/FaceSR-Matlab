@@ -4,9 +4,9 @@ function optimiseOverlap
 
     load('parameters.mat');
     
-    overlap = [0,1,2,3];
-    parameters.LRPatch = 4;
-    parameters.HRPatch = 4*parameters.ratio;
+    overlap = [0,1,2];
+    parameters.LRPatch = 3;
+    parameters.HRPatch = parameters.LRPatch*parameters.ratio;
     
     SSIMLcR = zeros(1, length(overlap));
     SSIMBI = zeros(1, length(overlap));
