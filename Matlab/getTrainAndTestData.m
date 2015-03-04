@@ -1,4 +1,7 @@
 function [trainSet, testSet] = getTrainAndTestData(data)
+% trainAndTestDataFP contains the whole set of train and test data with
+% their LR and HR (patched) versions
+% (trainAndTestDataRandom only contains the ground truth but randomised)
 
     if(exist('trainAndTestDataFP.mat', 'file')==0)
         load('parameters.mat');
@@ -11,9 +14,6 @@ function [trainSet, testSet] = getTrainAndTestData(data)
         
         trainSet.groundTruth = data(:, :, randperm(trainRange(2), trainSize));
         testSet.groundTruth = data(:,:,randperm(diff(testRange)+1, testSize)+trainRange(2));
-        
-        trainSet.groundTruth = double(trainSet.groundTruth)/255;
-        testSet.groundTruth = double(testSet.groundTruth)/255;
 
         %%% downsample to LR and HR
         trainSet.LR = imresize(trainSet.groundTruth, parameters.LRSize);

@@ -1,6 +1,6 @@
 resultFiles = {'optPatchResultO1.mat', 'optOverlapResultP3.mat', ...
-    'optOverlapResultP4.mat', 'optSortN.mat', 'optTau.mat'};
-colour = {'red', 'cyan', 'green', 'magenta', 'blue'};
+    'optOverlapResultP4.mat', 'optSortN.mat', 'optTau.mat','optOverlapTauGraph.mat' };
+colour = {'red', 'cyan', 'green', 'magenta', 'blue', 'cyan'};
 figure;
 hold on;
 
