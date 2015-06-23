@@ -1,2 +1,4 @@
 *.asv
 *.*~
+C_stuff/*
+Matlab/*.mat

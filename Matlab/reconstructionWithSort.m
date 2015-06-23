@@ -16,26 +16,31 @@ function targetHR = reconstructionWithSort(xLR,yLR, yHR, TAU, HR_OVERLAP, HRwidt
         N = size(yLR,5);
     end
     
-    % for each patch of xLR
+    numPatches = size(yHR,3)*size(yHR,4);
+    U = size(yHR,3);
+    LRPatchWidth = size(xLR,1);
+    HRPatchWidth = size(yHR,1);
+    
+    % for each xLR
     for k=1:size(xLR, 5)
         % Calculate the Euclidean distance between every xLR patch with every yLR patch
         d = calcDistance(xLR(:,:,:,:,k), yLR);
         
         % Sort yLR and yHR
-        d = reshape(d, 49, 360);
+        d = reshape(d, numPatches, 360);
         [d, order] = sort(d, 2);
-        yLRSort = reshape(yLR, 3,3,49, 360);
-        yHRSort = reshape(yHR, 12,12,49, 360);
-        for p = 1:49
+        yLRSort = reshape(yLR, LRPatchWidth,LRPatchWidth,numPatches, 360);
+        yHRSort = reshape(yHR, HRPatchWidth,HRPatchWidth,numPatches, 360);
+        for p = 1:numPatches
             yLRSort(:,:,p,:) = yLRSort(:,:,p,order(p,:));
             yHRSort(:,:,p,:) = yHRSort(:,:,p,order(p,:));
         end
-        yLRSort = reshape(yLRSort,3,3,7,7,360);
-        yHRSort = reshape(yHRSort,12,12,7,7,360); 
+        yLRSort = reshape(yLRSort,LRPatchWidth,LRPatchWidth,U,U,360);
+        yHRSort = reshape(yHRSort,HRPatchWidth,HRPatchWidth,U,U,360); 
         
         yLRSort = yLRSort(:,:,:,:,1:N);
         yHRSort = yHRSort(:,:,:,:,1:N);
-        d = reshape(d, 7,7, 360);
+        d = reshape(d, U,U, 360);
         d = d(:,:,1:N);
 
         % for each patch in xLR(k)

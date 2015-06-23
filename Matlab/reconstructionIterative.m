@@ -1,9 +1,14 @@
-function targetHR = reconstructionIterative(xLR, yLR, yHR, params, maxIterations)
+function targetHR = reconstructionIterative(xLR, yLR, yHR, params, iterations, kNN)
 % INPUT: testing data: xLR has dimension 3x3x7x7x40, 
 %        training data: yLR has dimension 3x3x7x7x360, 
 %                       yHR has dimension 12x12x7x7x360
 % OUTPUT: targetHR is estimation of the HR target face 60x60x40
 
+    if nargin<6
+        disp('kNN not specified, kNN default to 1');
+        kNN = 1;
+    end
+    
     disp('Reconstructing input LR faces by Gauss-Seidel method...');
     [LRPatchWidth, ~, U, ~, numTestImages] = size(xLR);
     numTrainImages = size(yLR,5);
@@ -24,8 +29,8 @@ function targetHR = reconstructionIterative(xLR, yLR, yHR, params, maxIterations
         d = calcDistance(xLR(:,:,:,:,k), yLR);
         d = reshape(d,U*U,numTrainImages);
         
-        % initial weight vector
-        wNew = repmat(1.0/numTrainImages,numTrainImages,1);
+        % initial weight vector for each test image is uniform
+        w = repmat(1.0/numTrainImages,numTrainImages,U*U);
         
         % loop through each patch in xLR(k)
         for p = 1:U*U
@@ -39,11 +44,15 @@ function targetHR = reconstructionIterative(xLR, yLR, yHR, params, maxIterations
             A = (G+params.tau*(D*D));            
             tol = 0.1; % tolerance for converence
             
-            [wNew, iter] = GaussSeidel(A, ones(numTrainImages,1), wNew, maxIterations, tol);
-            wNew = wNew/sum(wNew);
+            if (p~=1 && kNN ~= 0)
+                w = getInitialWeight(p, U, kNN, w);
+            end
+            [w(:,p), iter] = GaussSeidel(A, ones(numTrainImages,1), w(:,p), iterations, tol);
+            %w(:,p) = conjgrad(A, ones(numTrainImages,1), w(:,p), iterations);
+            w(:,p) = w(:,p)/sum(w(:,p));
 %             disp(strcat('patch ', num2str(p), ', iterations = ', num2str(iter)));
 
-            w1 = repmat(wNew',HRPatchWidth*HRPatchWidth,1);
+            w1 = repmat(w(:,p)',HRPatchWidth*HRPatchWidth,1);
             
             % construct HR patch
             xHR1d(:,p) = sum(squeeze(yHR1d(:,p,:)).*w1, 2); 

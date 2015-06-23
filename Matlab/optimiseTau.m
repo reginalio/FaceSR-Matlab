@@ -5,11 +5,13 @@ function optimiseTau
     load('parameters.mat');
     
     maxTau = 1e1;
-    tau = 1e-5;
+    tau = 1e-8;
     maxTime = 1000;
     
     SSIMLcR = [];
+    SSIMerr = [];
     pSNRLcR = [];
+    pSNRerr = [];
     
     runTime = [];
     xtau = [];
@@ -39,8 +41,13 @@ function optimiseTau
         runTime = [runTime; now];
 
         %%% measure output quality
-        SSIMLcR = [SSIMLcR; averageSSIM(resultLcR, testSet.HR)];
-        pSNRLcR = [pSNRLcR; averagePSNR(resultLcR, testSet.HR)];
+        [avgSSIM, err] = averageSSIM(resultLcR, testSet.HR);
+        SSIMLcR = [SSIMLcR; avgSSIM];
+        SSIMerr = [SSIMerr, err];
+        
+        [avgPSNR, err] = averagePSNR(resultLcR, testSet.HR);
+        pSNRLcR = [pSNRLcR; avgPSNR];
+        pSNRerr = [pSNRerr; err];
         
         if(sum(runTime)>maxTime)
             break;
@@ -54,6 +61,7 @@ function optimiseTau
      figure;
      hold on;
      plot(xtau, SSIMLcR, 'DisplayName', 'LcR');
+     errorbar(xtau,SSIMLcR,SSIMerr,'.');
      legend('-DynamicLegend');
      xlabel('tau');
      ylabel('Quality of output (SSIM)');
@@ -71,7 +79,7 @@ function optimiseTau
      xlabel('tau');
      ylabel('Time taken');
      
-     fname = 'optTau.mat';
-     save(fname, 'SSIMLcR', 'pSNRLcR', 'xtau', 'prepTime', 'runTime');
+     fname = 'optTau_new.mat';
+     save(fname, 'SSIMLcR', 'SSIMerr', 'pSNRLcR', 'pSNRerr', 'xtau', 'prepTime', 'runTime');
 end
 
